@@ -1,0 +1,13 @@
+{
+  "name": "java-developer-skills",
+  "version": "0.2.0",
+  "entries": [
+    {"name": "java-dev", "path": "skills/java-dev", "description": "新功能开发和代码生成"},
+    {"name": "java-design", "path": "skills/java-design", "description": "接口、数据库和架构设计"},
+    {"name": "java-review", "path": "skills/java-review", "description": "代码审查和提交前自检"},
+    {"name": "java-test", "path": "skills/java-test", "description": "单元、集成和可靠性测试"},
+    {"name": "java-fix", "path": "skills/java-fix", "description": "Bug 定位和最小修复"},
+    {"name": "java-refactor", "path": "skills/java-refactor", "description": "保持行为不变的渐进式重构"},
+    {"name": "java-rules", "path": "skills/java-rules", "description": "查询、解释和比较后端规则"}
+  ]
+}

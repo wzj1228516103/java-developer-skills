@@ -50,7 +50,7 @@ Java Developer Skills 将规则、公共契约和代码模板组合起来，并�
 | `/java-refactor` | 遗留代码渐进式重构 | 行为保持说明、重构步骤、风险和验证结果 |
 | `/java-rules` | 查询和解释后端约束 | 命中的规则、适用条件、正反例和例外说明 |
 
-入口名称是面向用户的工作模式；所有入口共享 `SKILL.md`、`references/`、`templates/`、`memory.md` 和 `project/`。当前仓库以 `java-developer-skills` 作为可安装的主 Skill，`/java-dev` 等是统一的命令式路由约定：支持 `/` 菜单的宿主可以按此拆分为独立入口，其他 Agent 也可以直接在消息开头写出入口名称。
+入口名称是面向用户的工作模式；所有入口共享根目录的规则、模板、个人偏好和项目配置。当前仓库已经通过 `.codex-plugin/plugin.json` 和 `skills.registry.json` 注册为多入口插件，`/java-dev` 等入口可独立发现；根目录 `SKILL.md` 继续作为不支持插件清单时的兼容入口。
 
 ### `/java-dev`：开发和生成代码
 
@@ -185,6 +185,8 @@ git clone https://github.com/wzj1228516103/java-developer-skills.git `
 
 也可以将仓库目录作为项目级 Skill 放入项目的 `.codex/skills/` 或 `.claude/skills/`，具体取决于 Agent 工具的 Skill 加载方式。
 
+如果宿主支持 Codex 插件清单，请使用仓库根目录的 `.codex-plugin/plugin.json`；入口注册表位于 `skills.registry.json`。新增或重命名入口时，需要同步修改这两个文件和 README 的入口表。
+
 ### 第一次使用
 
 在 Java 项目中直接提出任务即可，例如：
@@ -289,6 +291,17 @@ message_queue: rocketmq
 
 ```text
 java-developer-skills/
+├── .codex-plugin/
+│   └── plugin.json             # Codex 插件清单
+├── skills.registry.json        # 入口目录的单一事实源
+├── skills/                     # 可从 / 菜单发现的独立入口
+│   ├── java-dev/
+│   ├── java-design/
+│   ├── java-review/
+│   ├── java-test/
+│   ├── java-fix/
+│   ├── java-refactor/
+│   └── java-rules/
 ├── SKILL.md                    # 总纲、路由、等级和适用边界
 ├── agents/openai.yaml          # Agent 界面元数据
 ├── memory.md                   # 个人偏好
