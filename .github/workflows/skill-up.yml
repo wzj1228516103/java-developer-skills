@@ -1,0 +1,25 @@
+name: skill-up evaluation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Alibaba skill-up with Bailian
+        uses: alibaba/skill-up@main
+        with:
+          engine: qwen_code
+          provider: openai
+          model: qwen3-coder-plus
+          api-key: ${{ secrets.BAILIAN_API_KEY }}
+          base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+          skill-target: evals/eval.yaml
+          parallelism: 1

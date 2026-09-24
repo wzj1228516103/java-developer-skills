@@ -225,7 +225,36 @@ public String format(LocalDateTime value) {
 
 ### 评测可复现
 
-评测入口和场景位于 `evals/`。下一步会补充独立的评分脚本和 GitHub Actions，使每次规则或入口变更都能回归验证，而不是只检查 README 或关键词。
+评测入口和场景位于 `evals/`，本地辅助脚本位于 `scripts/run-eval.ps1`。脚本只从环境变量读取凭据，不会把 API Key 写入文件、命令参数或报告：
+
+```powershell
+# 先在当前 PowerShell 进程设置 Key，不要提交到仓库
+$env:OPENAI_API_KEY = "<你的百炼 API Key>"
+
+# 百炼 OpenAI 兼容模式
+.\scripts\run-eval.ps1 `
+  -Engine qwen_code `
+  -Model qwen3-coder-plus `
+  -SkillUpPath "C:\\tools\\skill-up.exe"
+
+# 只跑一个场景进行 smoke test
+.\scripts\run-eval.ps1 `
+  -Engine qwen_code `
+  -CaseName controller-validation `
+  -SkillUpPath "C:\\tools\\skill-up.exe"
+```
+
+Qwen Code 首次使用需要安装 CLI：`npm install --global @qwen-code/qwen-code`。如果使用 Codex 登录态，可直接运行 `-Engine codex`，无需设置 `OPENAI_API_KEY`。API Key 一旦在聊天、日志或终端历史中暴露，应立即在模型平台撤销并重新生成。
+
+### GitHub Actions
+
+仓库提供一个仅手动触发的工作流，避免每次 Push 自动消耗模型额度。进入 GitHub 的 **Actions → skill-up evaluation → Run workflow**，并在仓库设置中添加 Secret：
+
+```text
+BAILIAN_API_KEY=<你的百炼 API Key>
+```
+
+工作流不会把 Secret 写入日志或仓库；如果 Key 已经在聊天、Issue、日志或终端历史中出现，应先撤销旧 Key 再添加新的 Secret。
 
 ## 覆盖范围
 
@@ -389,6 +418,8 @@ java-developer-skills/
 ├── references/                 # 按主题加载的详细规则
 │   └── contracts/              # 响应、异常、错误码、分页、日志契约
 ├── templates/                  # Controller、DTO、Service、SQL、测试模板
+├── scripts/run-eval.ps1        # 本地安全评测脚本（凭据只读环境变量）
+├── .github/workflows/          # 手动触发的 skill-up CI 评测
 └── evals/                      # 评测入口和场景
 ```
 
