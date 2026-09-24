@@ -458,7 +458,10 @@ java-developer-skills/
 
 ## 参考来源与定位
 
-本项目借鉴了：
+本项目的规约来源与工程实现参考如下：
+
+- [**《Java 开发手册（黄山版）》**](https://github.com/alibaba/p3c)：本 Skill 的规约内容来源，阿里巴巴 Java 社区工程规约的集大成者。
+- [**skill-up**](https://github.com/alibaba/skill-up)：本 Skill 的评测工具，支撑 `evals/` 基准对比与持续回归。
 
 - [Alibaba Java Development Guide](https://github.com/Sxuan-Coder/alibaba-java-development-guide)：按需路由、规则分级、个人和项目配置、评测用例。
 - [backend-skill](https://github.com/zhangloveyan/backend-skill)：公共契约、代码模板、开发生命周期、Review 和测试闭环。
