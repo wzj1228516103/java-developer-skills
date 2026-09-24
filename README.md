@@ -185,7 +185,7 @@ Review 当前变更，重点检查权限、SQL 注入、事务边界、重复消
 
 修正断言和路由后，Controller、资源归属、遗留重构三个重点场景的有效运行中，Controller 和遗留重构均为 `with_skill 100%`；资源归属的有效回答包含越权、认证上下文、资源归属/租户边界和禁止信任请求体 `userId` 等关键要求。资源归属仍出现一次 Codex 运行时错误，因此不将该次结果伪装成通过。
 
-评测报告由 skill-up 生成，包含 `result.json`、`benchmark.json`、JUnit XML 和 HTML 报告。重新运行：
+评测配置还通过 `skills.local_path.include/exclude` 限制安装文件，只将 Skill 运行所需的入口、参考规则、模板和项目配置交给 Agent，排除 README、评测用例、报告和 Git 元数据，避免评测输入膨胀。评测报告由 skill-up 生成，包含 `result.json`、`benchmark.json`、JUnit XML 和 HTML 报告。重新运行：
 
 ```powershell
 skill-up validate evals/eval.yaml

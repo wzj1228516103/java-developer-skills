@@ -7,6 +7,22 @@ environment:
 skills:
   - source: local_path
     path: .
+    # 评测只安装 Skill 运行所需文件，避免把 README、评测样例和报告带入上下文。
+    include:
+      - SKILL.md
+      - skills/**/SKILL.md
+      - references/**
+      - templates/**
+      - memory.md
+      - project/**
+      - agents/**
+      - .codex-plugin/plugin.json
+      - skills.registry.json
+    exclude:
+      - README.md
+      - project/README.md
+      - evals/**
+      - .git/**
 
 engine:
   name: codex
