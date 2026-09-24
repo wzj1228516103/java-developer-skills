@@ -155,7 +155,42 @@ Review 当前变更，重点检查权限、SQL 注入、事务边界、重复消
 
 ## 效果验证
 
-本项目不虚构“使用前后通过率”。当前先验证 Skill 的结构、入口和规则路由，再逐步补充真实 Java 任务的 with-skill / without-skill 行为对比。
+本项目使用 [Alibaba skill-up](https://github.com/alibaba/skill-up) 对同一批任务进行 `with_skill` / `without_skill` 对照评测。评测引擎为本地 Codex 登录态，单次运行不代表统计学结论；报告和逐条输出保存在本地结果目录中，不把模型偶发运行错误计作 Skill 能力。
+
+### 评测场景
+
+`evals/eval.yaml` 当前包含 6 个场景：
+
+- Controller 参数校验与响应边界
+- SQL 注入与动态标识符白名单
+- 事务中调用远程服务
+- 用户资源归属与租户边界
+- 缓存一致性与消息重复消费
+- 遗留 Service 渐进式重构
+
+每个场景分别运行 `with_skill` 和 `without_skill`，采用规则断言检查关键安全、事务、分层和重构约束。
+
+### 首轮全量结果（2026-09-24）
+
+首轮 6 场景 × 2 配置共 12 次运行，skill-up 汇总如下：
+
+| 配置 | 通过率 | 平均耗时 | 平均 Token | 说明 |
+|---|---:|---:|---:|---|
+| `with_skill` | 66.67% | 96.2 秒 | 138,312 | 含 1 个运行时错误和 1 个断言误报 |
+| `without_skill` | 83.33% | 139.7 秒 | 66,256 | 基线结果，样本量较小 |
+
+这个结果不能解读为“Skill 让模型变差”：复核发现两个问题。其一，资源归属用例要求固定出现“不能信任”等字面表达，模型使用 `IDOR/BOLA` 和“登录身份来自安全上下文”等价表述时被误判；其二，Controller 用例曾出现 Codex `thread not found` 运行时错误。已将安全断言改为语义正则，并收紧 Skill 的工作区读取规则，避免自包含问题触发全仓扫描。
+
+### 聚焦复测
+
+修正断言和路由后，Controller、资源归属、遗留重构三个重点场景的有效运行中，Controller 和遗留重构均为 `with_skill 100%`；资源归属的有效回答包含越权、认证上下文、资源归属/租户边界和禁止信任请求体 `userId` 等关键要求。资源归属仍出现一次 Codex 运行时错误，因此不将该次结果伪装成通过。
+
+评测报告由 skill-up 生成，包含 `result.json`、`benchmark.json`、JUnit XML 和 HTML 报告。重新运行：
+
+```powershell
+skill-up validate evals/eval.yaml
+skill-up run evals/eval.yaml --output-dir ./skill-up-results --parallelism 1
+```
 
 ### 当前可验证结果
 

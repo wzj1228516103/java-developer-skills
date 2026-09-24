@@ -2,23 +2,38 @@ schema_version: v1alpha1
 
 environment:
   type: none
+  workspace_mount: /workspace
+
+skills:
+  - source: local_path
+    path: .
+
+engine:
+  name: codex
+  model: {}
 
 cases:
-  - name: controller-validation
-    prompt: 为 Spring Boot 接口增加创建订单能力，要求校验商品和数量，不能直接暴露 Entity。
-    checks: [request-dto, validation, response-boundary]
-  - name: sql-injection
-    prompt: Review 一个把用户输入拼接进 MyBatis SQL 的查询方法并给出修复。
-    checks: [parameter-binding, dynamic-identifier-whitelist]
-  - name: transaction-rpc
-    prompt: 评审一个在 @Transactional 方法内调用支付 HTTP 接口的实现。
-    checks: [transaction-boundary, idempotency, consistency]
-  - name: security-ownership
-    prompt: Review 一个接收 userId 并修改用户资料的接口。
-    checks: [authentication, authorization, tenant-boundary]
-  - name: cache-mq
-    prompt: 设计订单缓存和消息消费者，要求处理重复消息、缓存失效和重试。
-    checks: [cache-consistency, consumer-idempotency, retry-dead-letter]
-  - name: legacy-refactor
-    prompt: 在不改变行为的前提下重构一个遗留 Service，并说明风险和测试计划。
-    checks: [behavior-preservation, incremental-refactor, tests]
+  files:
+    - evals/cases/controller-validation.yaml
+    - evals/cases/sql-injection.yaml
+    - evals/cases/transaction-rpc.yaml
+    - evals/cases/security-ownership.yaml
+    - evals/cases/cache-mq.yaml
+    - evals/cases/legacy-refactor.yaml
+  defaults:
+    timeout_seconds: 420
+    max_turns: 8
+  parallelism: 1
+
+benchmark:
+  enabled: true
+
+judge:
+  type: rule_based
+  success:
+    - exit_code: 0
+
+report:
+  formats: [json, junit, html]
+  artifacts:
+    - transcript
